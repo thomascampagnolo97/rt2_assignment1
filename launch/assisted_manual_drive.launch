@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<launch>
+    <node name= "assistedManualDrive" pkg= "final_assignment" type= "assisted_manual_drive.py"  />
+    <remap from= "cmd_vel" to= "collision_cmd_vel" />
+    <node name="teleop_twist_keyboard" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" required="true" launch-prefix="xterm -e"/>
+</launch>

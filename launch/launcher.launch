@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<launch>
+    
+    <!-- Run the main_ui node -->
+    <node name= "userInterface" pkg= "final_assignment" type= "user_interface_controller.py"  output= "screen" />
+   
+    <node name= "autonomousDrive" pkg= "final_assignment" type= "autonomous_drive.py"  output="screen" />
+
+    <node name= "manualDrive" pkg= "final_assignment" type= "manual_drive.py"  output="screen" />
+
+</launch>
