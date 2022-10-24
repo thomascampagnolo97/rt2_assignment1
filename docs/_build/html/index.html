@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assignment 3: ROS Mobile Robots Simulator’s documentation! &mdash; Assignment 3: ROS Mobile Robots Simulator 1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> Assignment 3: ROS Mobile Robots Simulator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Assignment 3: ROS Mobile Robots Simulator’s documentation!</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+<li><a class="reference internal" href="#module-scripts.user_interface_controller">UserInterface Module</a><ul>
+<li><a class="reference internal" href="#scripts.user_interface_controller.autonomous_drive"><code class="docutils literal notranslate"><span class="pre">autonomous_drive()</span></code></a></li>
+<li><a class="reference internal" href="#scripts.user_interface_controller.driving_modality"><code class="docutils literal notranslate"><span class="pre">driving_modality()</span></code></a></li>
+<li><a class="reference internal" href="#scripts.user_interface_controller.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li><a class="reference internal" href="#scripts.user_interface_controller.manual_drive"><code class="docutils literal notranslate"><span class="pre">manual_drive()</span></code></a></li>
+<li><a class="reference internal" href="#scripts.user_interface_controller.user_interface"><code class="docutils literal notranslate"><span class="pre">user_interface()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-scripts.autonomous_drive">AutonomousDrive Module</a><ul>
+<li><a class="reference internal" href="#scripts.autonomous_drive.autonomous_drive_server"><code class="docutils literal notranslate"><span class="pre">autonomous_drive_server()</span></code></a></li>
+<li><a class="reference internal" href="#scripts.autonomous_drive.max_time"><code class="docutils literal notranslate"><span class="pre">max_time</span></code></a></li>
+<li><a class="reference internal" href="#scripts.autonomous_drive.menage_auto_drive"><code class="docutils literal notranslate"><span class="pre">menage_auto_drive()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-scripts.manual_drive">ManualDrive Module</a><ul>
+<li><a class="reference internal" href="#scripts.manual_drive.manual_drive_server"><code class="docutils literal notranslate"><span class="pre">manual_drive_server()</span></code></a></li>
+<li><a class="reference internal" href="#scripts.manual_drive.menage_manual_drive"><code class="docutils literal notranslate"><span class="pre">menage_manual_drive()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-scripts.assisted_manual_drive">AssistedManualDrive Module</a><ul>
+<li><a class="reference internal" href="#scripts.assisted_manual_drive.assisted_driving"><code class="docutils literal notranslate"><span class="pre">assisted_driving()</span></code></a></li>
+<li><a class="reference internal" href="#scripts.assisted_manual_drive.assisted_manual_drive"><code class="docutils literal notranslate"><span class="pre">assisted_manual_drive()</span></code></a></li>
+<li><a class="reference internal" href="#scripts.assisted_manual_drive.callBack_remap"><code class="docutils literal notranslate"><span class="pre">callBack_remap()</span></code></a></li>
+<li><a class="reference internal" href="#scripts.assisted_manual_drive.threshold"><code class="docutils literal notranslate"><span class="pre">threshold</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Assignment 3: ROS Mobile Robots Simulator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>Assignment 3: ROS Mobile Robots Simulator’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="assignment-3-ros-mobile-robots-simulator-s-documentation">
+<h1>Assignment 3: ROS Mobile Robots Simulator’s documentation!<a class="headerlink" href="#assignment-3-ros-mobile-robots-simulator-s-documentation" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="module-scripts.user_interface_controller">
+<span id="userinterface-module"></span><h1>UserInterface Module<a class="headerlink" href="#module-scripts.user_interface_controller" title="Permalink to this heading"></a></h1>
+<span class="target" id="module-user_interface_controller"></span><p>This is the main ROS node about the final assignment of the Research Track 1 course of the
+Robotics Engineering Master Degree.</p>
+<p><strong>Overview</strong></p>
+<p>The simulation involves a mobile robot positioned inside an environment, and it’s equipped
+with a laser scanner in order to detect the presence of obstacles, such as the walls of the
+environment. The aim of the project is to develop an architecture to control the robot in the environment.</p>
+<p>The software will rely on the move_base and gmapping packages for localizing the robot and plan the motion.</p>
+<dl class="simple">
+<dt>The implemented architecture allows the user to perform three different robot behavior modes, in particular:</dt><dd><ol class="arabic simple">
+<li><p>Reach autonomously the coordinate (x, y) entered by the user, thus obtaining an autonomous guide of the robot;</p></li>
+<li><p>Let the user to drive the robot with the keyboard, thus having the opportunity to try a manual robot driving experience;</p></li>
+<li><p>Let the user to guide the robot with the keyboard with assistance to avoid collisions with obstacles.</p></li>
+</ol>
+</dd>
+</dl>
+<p>In addition, the user interface allows to reset the position of the robot to the initial state or to exit
+the program by closing all active nodes.</p>
+<dl class="simple">
+<dt>Service:</dt><dd><p>/goal_coordinates to set the goal coordinates that the robot has to reach autonomously
+/manual_drive to drive manually the robot with the keyboard
+/gazebo/reset_world to reset the position of the robot to the initial state</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.user_interface_controller.autonomous_drive">
+<span class="sig-prename descclassname"><span class="pre">scripts.user_interface_controller.</span></span><span class="sig-name descname"><span class="pre">autonomous_drive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/user_interface_controller.html#autonomous_drive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.user_interface_controller.autonomous_drive" title="Permalink to this definition"></a></dt>
+<dd><p>Function for autonomous driving of the robot: the user sets the goal coordinates
+and checks whether the set goal is reached.</p>
+<dl class="simple">
+<dt>Service:</dt><dd><p>/goal_coordinates</p>
+</dd>
+</dl>
+<p>The user goal coordinates (x,y) is passed to the service <code class="docutils literal notranslate"><span class="pre">GoalCoordinates</span></code>, advertised by <a class="reference internal" href="#module-autonomous_drive" title="autonomous_drive: Python module to move the robot autonomously to the coordinates given by the user (Unix)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">autonomous_drive</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.user_interface_controller.driving_modality">
+<span class="sig-prename descclassname"><span class="pre">scripts.user_interface_controller.</span></span><span class="sig-name descname"><span class="pre">driving_modality</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/user_interface_controller.html#driving_modality"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.user_interface_controller.driving_modality" title="Permalink to this definition"></a></dt>
+<dd><p>Function used to decide the behavior of the robot according to the user input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user_input</strong> (<em>Int</em>) – user’s input of the selected driving modes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.user_interface_controller.main">
+<span class="sig-prename descclassname"><span class="pre">scripts.user_interface_controller.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/user_interface_controller.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.user_interface_controller.main" title="Permalink to this definition"></a></dt>
+<dd><p>Main function of the program which starts the service for resetting the gazebo
+environment and the user interface for selecting the robot driving modalities.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.user_interface_controller.manual_drive">
+<span class="sig-prename descclassname"><span class="pre">scripts.user_interface_controller.</span></span><span class="sig-name descname"><span class="pre">manual_drive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/user_interface_controller.html#manual_drive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.user_interface_controller.manual_drive" title="Permalink to this definition"></a></dt>
+<dd><p>Function for manual driving of the robot: calls the service to manage the
+input from keyboard.</p>
+<dl class="simple">
+<dt>Service:</dt><dd><p>/manual_drive</p>
+</dd>
+</dl>
+<p>The user can select the type of driving:
+1. Full manual driving experience, or
+2. Assisted manual driving experience with obstacle avoidance.</p>
+<p>The type is passed to the service <code class="docutils literal notranslate"><span class="pre">ManualDrive</span></code>, advertised by <a class="reference internal" href="#module-manual_drive" title="manual_drive: Python module to move the robot manually with the keyboard of the node `teleop_twist_keyboard` (Unix)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">manual_drive</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.user_interface_controller.user_interface">
+<span class="sig-prename descclassname"><span class="pre">scripts.user_interface_controller.</span></span><span class="sig-name descname"><span class="pre">user_interface</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/user_interface_controller.html#user_interface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.user_interface_controller.user_interface" title="Permalink to this definition"></a></dt>
+<dd><p>Function to print the user interface with the available driving modes on the screen.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>user’s input, value of the selected mode.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>user_input (Int)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scripts.autonomous_drive">
+<span id="autonomousdrive-module"></span><h1>AutonomousDrive Module<a class="headerlink" href="#module-scripts.autonomous_drive" title="Permalink to this heading"></a></h1>
+<span class="target" id="module-autonomous_drive"></span><p>This node implements the automatic driving mode of the robot from it’s current position, to the one
+inserted by the user. It’s also implemented a time-condition to evaluate if the desired position
+is reachable or not.</p>
+<dl class="simple">
+<dt>Service:</dt><dd><p>/goal_coordinates</p>
+</dd>
+<dt>Action:</dt><dd><p>/move_base
+/actionlib</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.autonomous_drive.autonomous_drive_server">
+<span class="sig-prename descclassname"><span class="pre">scripts.autonomous_drive.</span></span><span class="sig-name descname"><span class="pre">autonomous_drive_server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/autonomous_drive.html#autonomous_drive_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.autonomous_drive.autonomous_drive_server" title="Permalink to this definition"></a></dt>
+<dd><p>Function that initialises the autonomous driving service.</p>
+<p>Uses the service handler to manage the <cite>GoalCoordinates</cite> service, returning the values
+from the <cite>menage_auto_drive</cite> function.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="scripts.autonomous_drive.max_time">
+<span class="sig-prename descclassname"><span class="pre">scripts.autonomous_drive.</span></span><span class="sig-name descname"><span class="pre">max_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">rospy.Duration[30000000000]</span></em><a class="headerlink" href="#scripts.autonomous_drive.max_time" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum duration to reach the set goal</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.autonomous_drive.menage_auto_drive">
+<span class="sig-prename descclassname"><span class="pre">scripts.autonomous_drive.</span></span><span class="sig-name descname"><span class="pre">menage_auto_drive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/autonomous_drive.html#menage_auto_drive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.autonomous_drive.menage_auto_drive" title="Permalink to this definition"></a></dt>
+<dd><p>Function that manages the autonomous driving service, waiting an appropriate time to check
+if the target is reached.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>Float64 x</em><em>, </em><em>Float64 y</em>) – goal coordinates coming from the service</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>if the target is reached successfully
+-1: if the target can’t be reached and the goal has canceled</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>1</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scripts.manual_drive">
+<span id="manualdrive-module"></span><h1>ManualDrive Module<a class="headerlink" href="#module-scripts.manual_drive" title="Permalink to this heading"></a></h1>
+<span class="target" id="module-manual_drive"></span><dl class="simple">
+<dt>This node implements the lauching of the two manual driving modalities:</dt><dd><ol class="arabic simple">
+<li><p>the user is able to drive the robot without any constraint, full manual driving experience;</p></li>
+<li><p>the user drives the robot but there will be a collision control avoiding the user to hit obstacles, assisted manual driving experience.</p></li>
+</ol>
+</dd>
+<dt>Service:</dt><dd><p>/manual_drive</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.manual_drive.manual_drive_server">
+<span class="sig-prename descclassname"><span class="pre">scripts.manual_drive.</span></span><span class="sig-name descname"><span class="pre">manual_drive_server</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/manual_drive.html#manual_drive_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.manual_drive.manual_drive_server" title="Permalink to this definition"></a></dt>
+<dd><p>Function that initialises the manual driving service</p>
+<p>Uses the service handler to manage the <cite>ManualDrive</cite> service, returning the values
+from the <cite>menage_manual_drive</cite> function.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.manual_drive.menage_manual_drive">
+<span class="sig-prename descclassname"><span class="pre">scripts.manual_drive.</span></span><span class="sig-name descname"><span class="pre">menage_manual_drive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/manual_drive.html#menage_manual_drive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.manual_drive.menage_manual_drive" title="Permalink to this definition"></a></dt>
+<dd><p>Function that manages the manual driving service, called by both
+full and assisted manual driving mode choosen the launcher the specific mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>Int32</em>) – manual driving modality selected by the user</p>
+</dd>
+</dl>
+<p>The user choice is passed to the <cite>os</cite> to launch the chosen launch file.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scripts.assisted_manual_drive">
+<span id="assistedmanualdrive-module"></span><h1>AssistedManualDrive Module<a class="headerlink" href="#module-scripts.assisted_manual_drive" title="Permalink to this heading"></a></h1>
+<span class="target" id="module-assisted_manual_drive"></span><p>This node implements the assisted manual driving mode of the robot with obstacle avoidance.</p>
+<dl class="simple">
+<dt>Subscribes to:</dt><dd><p>/collision_cmd_vel to remap the velocity commands for the obstacle avoidance
+/scan to get the laser scanning of the map, distance measurements</p>
+</dd>
+<dt>Publishes to:</dt><dd><p>/cmd_vel the velocity commands.</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.assisted_manual_drive.assisted_driving">
+<span class="sig-prename descclassname"><span class="pre">scripts.assisted_manual_drive.</span></span><span class="sig-name descname"><span class="pre">assisted_driving</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/assisted_manual_drive.html#assisted_driving"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.assisted_manual_drive.assisted_driving" title="Permalink to this definition"></a></dt>
+<dd><p>Function called each time arrives a message from the LaserScan topic.
+This function gets the minimum value among 5 regions of the laser scan
+and take a decision setting the velocity to avoid obstacles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – variable name for the message that is passed in, <cite>sensor_msgs</cite></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>global variable that modifies the velocity of the robot based on its position</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>vel_msg</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.assisted_manual_drive.assisted_manual_drive">
+<span class="sig-prename descclassname"><span class="pre">scripts.assisted_manual_drive.</span></span><span class="sig-name descname"><span class="pre">assisted_manual_drive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/assisted_manual_drive.html#assisted_manual_drive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.assisted_manual_drive.assisted_manual_drive" title="Permalink to this definition"></a></dt>
+<dd><p>Function that initialises the subscribers for the assisted driving mode, <cite>inputKey_node</cite>
+subscribing to the topics <cite>Twist</cite> and <cite>LaserScan</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scripts.assisted_manual_drive.callBack_remap">
+<span class="sig-prename descclassname"><span class="pre">scripts.assisted_manual_drive.</span></span><span class="sig-name descname"><span class="pre">callBack_remap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/scripts/assisted_manual_drive.html#callBack_remap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#scripts.assisted_manual_drive.callBack_remap" title="Permalink to this definition"></a></dt>
+<dd><p>Callback function to copy the new topic <cite>collision_cmd_vel</cite> on <cite>vel_msg</cite>
+which can be modified or not</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – variable name for the message that is passed in, <cite>geometry_msgs</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="scripts.assisted_manual_drive.threshold">
+<span class="sig-prename descclassname"><span class="pre">scripts.assisted_manual_drive.</span></span><span class="sig-name descname"><span class="pre">threshold</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.7</span></em><a class="headerlink" href="#scripts.assisted_manual_drive.threshold" title="Permalink to this definition"></a></dt>
+<dd><p>Global variable of the distance threshold to avoid collision with obstacles</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Thomas Campagnolo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

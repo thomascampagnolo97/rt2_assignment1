@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rospy.rostime &mdash; Assignment 3: ROS Mobile Robots Simulator 1.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> Assignment 3: ROS Mobile Robots Simulator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Assignment 3: ROS Mobile Robots Simulator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>rospy.rostime</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rospy.rostime</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Software License Agreement (BSD License)</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2008, Willow Garage, Inc.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions</span>
+<span class="c1"># are met:</span>
+<span class="c1">#</span>
+<span class="c1">#  * Redistributions of source code must retain the above copyright</span>
+<span class="c1">#    notice, this list of conditions and the following disclaimer.</span>
+<span class="c1">#  * Redistributions in binary form must reproduce the above</span>
+<span class="c1">#    copyright notice, this list of conditions and the following</span>
+<span class="c1">#    disclaimer in the documentation and/or other materials provided</span>
+<span class="c1">#    with the distribution.</span>
+<span class="c1">#  * Neither the name of Willow Garage, Inc. nor the names of its</span>
+<span class="c1">#    contributors may be used to endorse or promote products derived</span>
+<span class="c1">#    from this software without specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</span>
+<span class="c1"># &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</span>
+<span class="c1"># LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS</span>
+<span class="c1"># FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE</span>
+<span class="c1"># COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,</span>
+<span class="c1"># INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,</span>
+<span class="c1"># BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</span>
+<span class="c1"># LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER</span>
+<span class="c1"># CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</span>
+<span class="c1"># LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN</span>
+<span class="c1"># ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+<span class="c1">#</span>
+<span class="c1"># Revision $Id$</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ROS time and duration representations, as well as internal routines</span>
+<span class="sd">for managing wallclock versus a simulated clock.  The important data</span>
+<span class="sd">classes are L{Time} and L{Duration}, which represent the ROS &#39;time&#39;</span>
+<span class="sd">and &#39;duration&#39; primitives, respectively.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="kn">import</span> <span class="nn">rospy.exceptions</span>
+
+<span class="kn">import</span> <span class="nn">genpy</span>
+
+<span class="c1">## /time support. This hooks into the rospy Time representation and</span>
+<span class="c1">## allows it to be overridden with data from the /time topic.</span>
+
+<span class="n">_rostime_initialized</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">_rostime_current</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">_rostime_cond</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">()</span>
+
+<span class="c1"># subclass genpy to provide abstraction layer</span>
+<span class="k">class</span> <span class="nc">Duration</span><span class="p">(</span><span class="n">genpy</span><span class="o">.</span><span class="n">Duration</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Duration represents the ROS &#39;duration&#39; primitive type, which</span>
+<span class="sd">    consists of two integers: seconds and nanoseconds. The Duration</span>
+<span class="sd">    class allows you to add and subtract Duration instances, including</span>
+<span class="sd">    adding and subtracting from L{Time} instances.</span>
+
+<span class="sd">    Usage::</span>
+<span class="sd">      five_seconds = Duration(5)</span>
+<span class="sd">      five_nanoseconds = Duration(0, 5)</span>
+
+<span class="sd">      print &#39;Fields are&#39;, five_seconds.secs, five_seconds.nsecs</span>
+
+<span class="sd">      # Duration arithmetic</span>
+<span class="sd">      ten_seconds = five_seconds + five_seconds</span>
+<span class="sd">      five_secs_ago = rospy.Time.now() - five_seconds # Time minus Duration is a Time</span>
+
+<span class="sd">      true_val = ten_second &gt; five_seconds</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">secs</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nsecs</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create new Duration instance. secs and nsecs are integers and</span>
+<span class="sd">        correspond to the ROS &#39;duration&#39; primitive type.</span>
+
+<span class="sd">        @param secs: seconds</span>
+<span class="sd">        @type  secs: int</span>
+<span class="sd">        @param nsecs: nanoseconds</span>
+<span class="sd">        @type  nsecs: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Duration</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">secs</span><span class="p">,</span> <span class="n">nsecs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;rospy.Duration[</span><span class="si">%d</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_nsec</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">Time</span><span class="p">(</span><span class="n">genpy</span><span class="o">.</span><span class="n">Time</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Time represents the ROS &#39;time&#39; primitive type, which consists of two</span>
+<span class="sd">    integers: seconds since epoch and nanoseconds since seconds. Time</span>
+<span class="sd">    instances are mutable.</span>
+
+<span class="sd">    The L{Time.now()} factory method can initialize Time to the</span>
+<span class="sd">    current ROS time and L{from_sec()} can be used to create a</span>
+<span class="sd">    Time instance from the Python&#39;s time.time() float seconds</span>
+<span class="sd">    representation.</span>
+
+<span class="sd">    The Time class allows you to subtract Time instances to compute</span>
+<span class="sd">    Durations, as well as add Durations to Time to create new Time</span>
+<span class="sd">    instances.</span>
+
+<span class="sd">    Usage::</span>
+<span class="sd">      now = rospy.Time.now()</span>
+<span class="sd">      zero_time = rospy.Time()</span>
+
+<span class="sd">      print &#39;Fields are&#39;, now.secs, now.nsecs</span>
+
+<span class="sd">      # Time arithmetic</span>
+<span class="sd">      five_secs_ago = now - rospy.Duration(5) # Time minus Duration is a Time</span>
+<span class="sd">      five_seconds  = now - five_secs_ago  # Time minus Time is a Duration</span>
+<span class="sd">      true_val = now &gt; five_secs_ago</span>
+
+<span class="sd">      # NOTE: in general, you will want to avoid using time.time() in ROS code</span>
+<span class="sd">      import time</span>
+<span class="sd">      py_time = rospy.Time.from_sec(time.time())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[]</span>    
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">secs</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nsecs</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor: secs and nsecs are integers and correspond to the</span>
+<span class="sd">        ROS &#39;time&#39; primitive type. You may prefer to use the static</span>
+<span class="sd">        L{from_sec()} and L{now()} factory methods instead.</span>
+<span class="sd">        </span>
+<span class="sd">        @param secs: seconds since epoch</span>
+<span class="sd">        @type  secs: int</span>
+<span class="sd">        @param nsecs: nanoseconds since seconds (since epoch)</span>
+<span class="sd">        @type  nsecs: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Time</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">secs</span><span class="p">,</span> <span class="n">nsecs</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;rospy.Time[</span><span class="si">%d</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_nsec</span><span class="p">()</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">now</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create new L{Time} instance representing current time. This</span>
+<span class="sd">        can either be wall-clock time or a simulated clock. It is</span>
+<span class="sd">        strongly recommended that you use the now() factory to create</span>
+<span class="sd">        current time representations instead of reading wall-clock</span>
+<span class="sd">        time and create Time instances from it.</span>
+<span class="sd">        </span>
+<span class="sd">        @return: L{Time} instance for current time</span>
+<span class="sd">        @rtype: L{Time}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">get_rostime</span><span class="p">()</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_seconds</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">float_secs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use Time.from_sec() instead. Retained for backwards compatibility.</span>
+<span class="sd">        </span>
+<span class="sd">        @param float_secs: time value in time.time() format</span>
+<span class="sd">        @type  float_secs: float</span>
+<span class="sd">        @return: Time instance for specified time</span>
+<span class="sd">        @rtype: L{Time}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_sec</span><span class="p">(</span><span class="n">float_secs</span><span class="p">)</span>
+    
+<span class="k">def</span> <span class="nf">_set_rostime</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Callback to update ROS time from a ROS Topic&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">genpy</span><span class="o">.</span><span class="n">Time</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">secs</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">nsecs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Time</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;must be Time instance: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">t</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+    <span class="k">global</span> <span class="n">_rostime_current</span>
+    <span class="n">_rostime_current</span> <span class="o">=</span> <span class="n">t</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_rostime_cond</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="n">_rostime_cond</span><span class="o">.</span><span class="n">notifyAll</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">_rostime_cond</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+    
+<span class="k">def</span> <span class="nf">get_rostime</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the current time as a L{Time} object    </span>
+<span class="sd">    @return: current time as a L{rospy.Time} object</span>
+<span class="sd">    @rtype: L{Time}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_rostime_initialized</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">rospy</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ROSInitException</span><span class="p">(</span><span class="s2">&quot;time is not initialized. Have you called init_node()?&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_rostime_current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># initialize with sim time</span>
+        <span class="k">return</span> <span class="n">_rostime_current</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># initialize with wallclock</span>
+        <span class="n">float_secs</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">secs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">float_secs</span><span class="p">)</span>
+        <span class="n">nsecs</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">float_secs</span> <span class="o">-</span> <span class="n">secs</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000000000</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Time</span><span class="p">(</span><span class="n">secs</span><span class="p">,</span> <span class="n">nsecs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">get_time</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the current time as float secs (time.time() format)</span>
+<span class="sd">    @return: time in secs (time.time() format)    </span>
+<span class="sd">    @rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Time</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">to_sec</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">set_rostime_initialized</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Internal use.</span>
+<span class="sd">    Mark rostime as initialized. This flag enables other routines to</span>
+<span class="sd">    throw exceptions if rostime is being used before the underlying</span>
+<span class="sd">    system is initialized.</span>
+<span class="sd">    @param val: value for initialization state</span>
+<span class="sd">    @type  val: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_rostime_initialized</span>
+    <span class="n">_rostime_initialized</span> <span class="o">=</span> <span class="n">val</span>
+
+<span class="k">def</span> <span class="nf">is_rostime_initialized</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Internal use.</span>
+<span class="sd">    @return: True if rostime has been initialized</span>
+<span class="sd">    @rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_rostime_initialized</span>    
+
+<span class="k">def</span> <span class="nf">get_rostime_cond</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    internal API for helper routines that need to wait on time updates</span>
+<span class="sd">    @return: rostime conditional var</span>
+<span class="sd">    @rtype: threading.Cond</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_rostime_cond</span>
+
+<span class="k">def</span> <span class="nf">is_wallclock</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Internal use for ROS-time routines.</span>
+<span class="sd">    @return: True if ROS is currently using wallclock time</span>
+<span class="sd">    @rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_rostime_current</span> <span class="o">==</span> <span class="kc">None</span>
+    
+<span class="k">def</span> <span class="nf">switch_to_wallclock</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Internal use.</span>
+<span class="sd">    Switch ROS to wallclock time. This is mainly for testing purposes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_rostime_current</span>
+    <span class="n">_rostime_current</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_rostime_cond</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+        <span class="n">_rostime_cond</span><span class="o">.</span><span class="n">notifyAll</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">_rostime_cond</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">wallsleep</span><span class="p">(</span><span class="n">duration</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Internal use.</span>
+<span class="sd">    Windows interrupts time.sleep with an IOError exception</span>
+<span class="sd">    when a signal is caught. Even when the signal is handled</span>
+<span class="sd">    by a callback, it will then proceed to throw IOError when</span>
+<span class="sd">    the handling has completed. </span>
+
+<span class="sd">    Refer to https://code.ros.org/trac/ros/ticket/3421.</span>
+
+<span class="sd">    So we create a platform dependant wrapper to handle this</span>
+<span class="sd">    here.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;win32&#39;</span><span class="p">]:</span> <span class="c1"># cygwin seems to be ok</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> 
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Thomas Campagnolo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

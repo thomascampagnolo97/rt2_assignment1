@@ -1,4 +1,36 @@
 #! /usr/bin/env python
+"""
+.. module:: user_interface_controller
+   :platform: Unix
+   :synopsis: Python module for the User Interface Controller
+   
+.. moduleauthor:: Thomas Campagnolo <thomascampagnolo.s5343274@gmail.com>
+
+This is the main ROS node about the final assignment of the Research Track 1 course of the 
+Robotics Engineering Master Degree.
+
+**Overview**
+
+The simulation involves a mobile robot positioned inside an environment, and it's equipped 
+with a laser scanner in order to detect the presence of obstacles, such as the walls of the 
+environment. The aim of the project is to develop an architecture to control the robot in the environment. 
+
+The software will rely on the move_base and gmapping packages for localizing the robot and plan the motion. 
+
+The implemented architecture allows the user to perform three different robot behavior modes, in particular:
+    1. Reach autonomously the coordinate (x, y) entered by the user, thus obtaining an autonomous guide of the robot;
+    2. Let the user to drive the robot with the keyboard, thus having the opportunity to try a manual robot driving experience;
+    3. Let the user to guide the robot with the keyboard with assistance to avoid collisions with obstacles.
+
+In addition, the user interface allows to reset the position of the robot to the initial state or to exit 
+the program by closing all active nodes.
+
+Service:
+    /goal_coordinates to set the goal coordinates that the robot has to reach autonomously
+    /manual_drive to drive manually the robot with the keyboard
+    /gazebo/reset_world to reset the position of the robot to the initial state
+"""
+
 
 import rospy
 import os
@@ -13,11 +45,15 @@ class bcolors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
 
-''' 
+
+def user_interface():
+    """
     Function to print the user interface with the available driving modes on the screen.
-    Returns the value of the selected mode.
-'''
-def user_interface():  
+
+    Returns:
+        user_input (Int): user's input, value of the selected mode.
+    """
+
     print("***************************************************************************************")
     print('Hello! Please select between the different modalities to decide the robot driving mode:')
     print('1 ---> Autonomus drive, setting a goal point using (x,y) coordinates')
@@ -36,11 +72,18 @@ def user_interface():
     
     return user_input
 
-''' 
+
+def autonomous_drive():
+    """
     Function for autonomous driving of the robot: the user sets the goal coordinates 
     and checks whether the set goal is reached.
-'''
-def autonomous_drive():   
+
+    Service:
+        /goal_coordinates
+    
+    The user goal coordinates (x,y) is passed to the service ``GoalCoordinates``, advertised by :mod:`autonomous_drive`.
+    """
+
     print("Modality selected 1: Autonomus drive\n")
     x = float(input("Insert x-coordinate: "))
     y = float(input("Insert y-coordinate: "))
@@ -59,12 +102,22 @@ def autonomous_drive():
         # Goal not achieved
     	print(f"{bcolors.FAIL}Target not reached!{bcolors.ENDC}\n")
 
-
-''' 
+       	
+def manual_drive():
+    """
     Function for manual driving of the robot: calls the service to manage the 
     input from keyboard.
-'''         	
-def manual_drive():
+
+    Service:
+        /manual_drive
+    
+    The user can select the type of driving:
+    1. Full manual driving experience, or
+    2. Assisted manual driving experience with obstacle avoidance.
+    
+    The type is passed to the service ``ManualDrive``, advertised by :mod:`manual_drive`.
+    """
+
     #if the user selects mode 2 it will 
     
     print("Modality selected 2: Manual drive\n")
@@ -95,11 +148,15 @@ def manual_drive():
         # Assisted manual driving experience to avoid obstacles
         manual_driving(2)
 
-''' 
-   Function used to decide the behavior of the robot according to 
-   the user input
-'''
+
 def driving_modality(user_input):
+    """
+    Function used to decide the behavior of the robot according to the user input
+
+    Args:
+        user_input (Int): user's input of the selected driving modes.
+    """
+
     if user_input == 1:
         # Autonomus driving with goal set from user
         autonomous_drive()
@@ -130,13 +187,17 @@ def driving_modality(user_input):
         os.system('clear')
         print(f"{bcolors.WARNING}Invlid input.{bcolors.ENDC}\n\n")
 
-'''
-    Main function of the program which starts the service for 
-    resetting the gazebo environment and the user interface
-    for selecting the robot driving mode.
-'''
+
 def main():
+    """
+    Main function of the program which starts the service for resetting the gazebo 
+    environment and the user interface for selecting the robot driving modalities.
+    """
+
     global reset_world
+    """
+    Global service for reset the robot position.
+    """
 
     #initialize the ros node of the user interface
     rospy.init_node('user_interface_controller')

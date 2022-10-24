@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scripts.user_interface_controller &mdash; Assignment 3: ROS Mobile Robots Simulator 1.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> Assignment 3: ROS Mobile Robots Simulator
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Assignment 3: ROS Mobile Robots Simulator</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>scripts.user_interface_controller</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for scripts.user_interface_controller</h1><div class="highlight"><pre>
+<span></span><span class="ch">#! /usr/bin/env python</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: user_interface_controller</span>
+<span class="sd">   :platform: Unix</span>
+<span class="sd">   :synopsis: Python module for the User Interface Controller</span>
+<span class="sd">   </span>
+<span class="sd">.. moduleauthor:: Thomas Campagnolo &lt;thomascampagnolo.s5343274@gmail.com&gt;</span>
+
+<span class="sd">This is the main ROS node about the final assignment of the Research Track 1 course of the </span>
+<span class="sd">Robotics Engineering Master Degree.</span>
+
+<span class="sd">**Overview**</span>
+
+<span class="sd">The simulation involves a mobile robot positioned inside an environment, and it&#39;s equipped </span>
+<span class="sd">with a laser scanner in order to detect the presence of obstacles, such as the walls of the </span>
+<span class="sd">environment. The aim of the project is to develop an architecture to control the robot in the environment. </span>
+
+<span class="sd">The software will rely on the move_base and gmapping packages for localizing the robot and plan the motion. </span>
+
+<span class="sd">The implemented architecture allows the user to perform three different robot behavior modes, in particular:</span>
+<span class="sd">    1. Reach autonomously the coordinate (x, y) entered by the user, thus obtaining an autonomous guide of the robot;</span>
+<span class="sd">    2. Let the user to drive the robot with the keyboard, thus having the opportunity to try a manual robot driving experience;</span>
+<span class="sd">    3. Let the user to guide the robot with the keyboard with assistance to avoid collisions with obstacles.</span>
+
+<span class="sd">In addition, the user interface allows to reset the position of the robot to the initial state or to exit </span>
+<span class="sd">the program by closing all active nodes.</span>
+
+<span class="sd">Service:</span>
+<span class="sd">    /goal_coordinates to set the goal coordinates that the robot has to reach autonomously</span>
+<span class="sd">    /manual_drive to drive manually the robot with the keyboard</span>
+<span class="sd">    /gazebo/reset_world to reset the position of the robot to the initial state</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">std_srvs.srv</span> <span class="kn">import</span> <span class="n">Empty</span>
+<span class="kn">from</span> <span class="nn">final_assignment.srv</span> <span class="kn">import</span> <span class="n">GoalCoordinates</span>    <span class="c1"># service for autonomous driving</span>
+<span class="kn">from</span> <span class="nn">final_assignment.srv</span> <span class="kn">import</span> <span class="n">ManualDrive</span>        <span class="c1"># service for manual driving</span>
+
+<span class="k">class</span> <span class="nc">bcolors</span><span class="p">:</span>
+    <span class="n">OKGREEN</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[92m&#39;</span>
+    <span class="n">WARNING</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[93m&#39;</span>
+    <span class="n">FAIL</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[91m&#39;</span>
+    <span class="n">ENDC</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span>
+
+
+<div class="viewcode-block" id="user_interface"><a class="viewcode-back" href="../../index.html#scripts.user_interface_controller.user_interface">[docs]</a><span class="k">def</span> <span class="nf">user_interface</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to print the user interface with the available driving modes on the screen.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        user_input (Int): user&#39;s input, value of the selected mode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;***************************************************************************************&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hello! Please select between the different modalities to decide the robot driving mode:&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1 ---&gt; Autonomus drive, setting a goal point using (x,y) coordinates&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;2 ---&gt; Manual driving experience, using the keyboard to control the robot&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;9 ---&gt; Reset robot position&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;0 ---&gt; EXIT</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;***************************************************************************************&quot;</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># if input is an integer it exit from the while</span>
+            <span class="n">user_input</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Modality: &#39;</span><span class="p">))</span>
+            <span class="k">break</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Please, type an integer number</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">user_input</span></div>
+
+
+<div class="viewcode-block" id="autonomous_drive"><a class="viewcode-back" href="../../index.html#scripts.user_interface_controller.autonomous_drive">[docs]</a><span class="k">def</span> <span class="nf">autonomous_drive</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function for autonomous driving of the robot: the user sets the goal coordinates </span>
+<span class="sd">    and checks whether the set goal is reached.</span>
+
+<span class="sd">    Service:</span>
+<span class="sd">        /goal_coordinates</span>
+<span class="sd">    </span>
+<span class="sd">    The user goal coordinates (x,y) is passed to the service ``GoalCoordinates``, advertised by :mod:`autonomous_drive`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Modality selected 1: Autonomus drive</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Insert x-coordinate: &quot;</span><span class="p">))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Insert y-coordinate: &quot;</span><span class="p">))</span>
+
+    <span class="c1"># calls the service GoalCoordinates and sends the coordinates to the menage_auto_drive </span>
+    <span class="c1"># function in autonomous_drive.py</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="s1">&#39;goal_coordinates&#39;</span><span class="p">)</span>
+    <span class="n">goal_coordinates</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="s1">&#39;goal_coordinates&#39;</span><span class="p">,</span> <span class="n">GoalCoordinates</span><span class="p">)</span>
+    <span class="n">goal</span> <span class="o">=</span> <span class="n">goal_coordinates</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+    
+    <span class="c1"># Check the target value</span>
+    <span class="k">if</span> <span class="n">goal</span><span class="o">.</span><span class="n">return_</span><span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Goal achieved</span>
+    	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bcolors</span><span class="o">.</span><span class="n">OKGREEN</span><span class="si">}</span><span class="s2">Target reached successfully!</span><span class="si">{</span><span class="n">bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Goal not achieved</span>
+    	<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bcolors</span><span class="o">.</span><span class="n">FAIL</span><span class="si">}</span><span class="s2">Target not reached!</span><span class="si">{</span><span class="n">bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+       	
+<div class="viewcode-block" id="manual_drive"><a class="viewcode-back" href="../../index.html#scripts.user_interface_controller.manual_drive">[docs]</a><span class="k">def</span> <span class="nf">manual_drive</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function for manual driving of the robot: calls the service to manage the </span>
+<span class="sd">    input from keyboard.</span>
+
+<span class="sd">    Service:</span>
+<span class="sd">        /manual_drive</span>
+<span class="sd">    </span>
+<span class="sd">    The user can select the type of driving:</span>
+<span class="sd">    1. Full manual driving experience, or</span>
+<span class="sd">    2. Assisted manual driving experience with obstacle avoidance.</span>
+<span class="sd">    </span>
+<span class="sd">    The type is passed to the service ``ManualDrive``, advertised by :mod:`manual_drive`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#if the user selects mode 2 it will </span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Modality selected 2: Manual drive</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># calls the service ManualDrive</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="s1">&#39;manual_drive&#39;</span><span class="p">)</span>
+    <span class="n">manual_driving</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="s1">&#39;manual_drive&#39;</span><span class="p">,</span> <span class="n">ManualDrive</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Select the type of driving&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1: Full manual driving experience&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;2: Assisted manual driving experience</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># if input is an integer it exit from the while</span>
+            <span class="n">user_manual_mode</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Type of driving: &#39;</span><span class="p">))</span>
+            <span class="k">break</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Incorrect input. Please, type one of the two values described above</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Check the type of manual driving</span>
+    <span class="k">if</span> <span class="n">user_manual_mode</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># send 1 to the manual_driving_mode (request) of the service ManualDrive, called in manual_drive.py.</span>
+        <span class="c1"># Full manual driving experience, without assistance to avoid obstacles</span>
+        <span class="n">manual_driving</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">user_manual_mode</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># send 2 to the manual_driving_mode (request) of the service ManualDrive, called in manual_drive.py</span>
+        <span class="c1"># Assisted manual driving experience to avoid obstacles</span>
+        <span class="n">manual_driving</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="driving_modality"><a class="viewcode-back" href="../../index.html#scripts.user_interface_controller.driving_modality">[docs]</a><span class="k">def</span> <span class="nf">driving_modality</span><span class="p">(</span><span class="n">user_input</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function used to decide the behavior of the robot according to the user input</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        user_input (Int): user&#39;s input of the selected driving modes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">user_input</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Autonomus driving with goal set from user</span>
+        <span class="n">autonomous_drive</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">user_input</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># Manual driving experience using the keyboard</span>
+        <span class="n">manual_drive</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">user_input</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
+        <span class="c1"># Reset robot position</span>
+        <span class="n">reset_world</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bcolors</span><span class="o">.</span><span class="n">WARNING</span><span class="si">}</span><span class="s2">Reset environment!</span><span class="si">{</span><span class="n">bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>   <span class="c1"># Feedback to user</span>
+    <span class="c1"># Exit loop and shutdown ros</span>
+    <span class="k">elif</span> <span class="n">user_input</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Clear terminal</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bcolors</span><span class="o">.</span><span class="n">WARNING</span><span class="si">}</span><span class="s2">Programs are EXITING</span><span class="si">{</span><span class="n">bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Kill all the nodes       </span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s2">&quot;rosnode list&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)):</span>
+            <span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;rosnode kill &quot;</span><span class="o">+</span> <span class="n">node</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;killall -9 rosmaster&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># None of the options available </span>
+        <span class="c1"># Clear terminal</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bcolors</span><span class="o">.</span><span class="n">WARNING</span><span class="si">}</span><span class="s2">Invlid input.</span><span class="si">{</span><span class="n">bcolors</span><span class="o">.</span><span class="n">ENDC</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../index.html#scripts.user_interface_controller.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main function of the program which starts the service for resetting the gazebo </span>
+<span class="sd">    environment and the user interface for selecting the robot driving modalities.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">global</span> <span class="n">reset_world</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Global service for reset the robot position.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1">#initialize the ros node of the user interface</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s1">&#39;user_interface_controller&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Create a client to reset the simulation environment</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="s1">&#39;/gazebo/reset_world&#39;</span><span class="p">)</span>
+    <span class="n">reset_world</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="s1">&#39;/gazebo/reset_world&#39;</span><span class="p">,</span> <span class="n">Empty</span><span class="p">)</span>
+
+    <span class="c1"># Loop user interface</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">rospy</span><span class="o">.</span><span class="n">is_shutdown</span><span class="p">():</span>
+        <span class="c1"># Get the driving modality from user</span>
+        <span class="n">user_input</span> <span class="o">=</span> <span class="n">user_interface</span><span class="p">()</span>
+        <span class="c1"># The selected driving mode starts</span>
+        <span class="n">driving_modality</span><span class="p">(</span><span class="n">user_input</span><span class="p">)</span></div>
+
+ 
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Thomas Campagnolo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

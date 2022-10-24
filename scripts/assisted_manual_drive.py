@@ -1,4 +1,21 @@
 #! /usr/bin/env python
+"""
+.. module:: assisted_manual_drive
+    :platform: Unix
+    :synopsis: Python module to move the robot manually safely with the keyboard of the node `teleop_twist_keyboard`
+   
+.. moduleauthor:: Thomas Campagnolo <thomascampagnolo.s5343274@gmail.com>
+
+This node implements the assisted manual driving mode of the robot with obstacle avoidance.
+
+Subscribes to:
+    /collision_cmd_vel to remap the velocity commands for the obstacle avoidance
+    /scan to get the laser scanning of the map, distance measurements
+
+Publishes to:
+    /cmd_vel the velocity commands.
+"""
+
 
 import rospy
 import numpy
@@ -8,6 +25,10 @@ from sensor_msgs.msg import LaserScan           #for scan topic
 
 
 threshold = 0.7 # limit distance to avoid collision with obstacles
+"""
+Global variable of the distance threshold to avoid collision with obstacles
+"""
+
 vel_msg = Twist()   # initialize Twist object for the publisher
 
 class bcolors:
@@ -17,12 +38,19 @@ class bcolors:
     ENDC = '\033[0m'
    
 
-'''
+
+def assisted_driving(data):
+    """
     Function called each time arrives a message from the LaserScan topic.
     This function gets the minimum value among 5 regions of the laser scan 
     and take a decision setting the velocity to avoid obstacles.
-''' 
-def assisted_driving(data):
+
+    Args:
+        data:  variable name for the message that is passed in, `sensor_msgs`
+    
+    Returns:
+        vel_msg: global variable that modifies the velocity of the robot based on its position
+    """
     global section, vel_msg
 
     # Initialize publisher
@@ -75,18 +103,25 @@ def assisted_driving(data):
     # Publish the new velocity
     pub_vel.publish(vel_msg)
 
-'''
-    Callback function to copy the new topic collision_cmd_vel on vel_msg 
-    which can be modified or not
-''' 
+
 def callBack_remap(data):
+    """
+    Callback function to copy the new topic `collision_cmd_vel` on `vel_msg` 
+    which can be modified or not
+
+    Args:
+        data: variable name for the message that is passed in, `geometry_msgs`
+    """
     global vel_msg
     vel_msg = data
 
-'''
-    Function that initialises the subscribers for the assisted driving mode
-'''   
+  
 def assisted_manual_drive():
+    """
+    Function that initialises the subscribers for the assisted driving mode, `inputKey_node`
+    subscribing to the topics `Twist` and `LaserScan`.
+    """
+
     global sub_laser, sub_user_vel
 
     #initialize the node
